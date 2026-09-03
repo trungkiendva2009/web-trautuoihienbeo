@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Đơn Hàng - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <span class="nav-item-icon">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <span class="nav-item-icon">🍽️</span>
+                    <span>Món ăn</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-item-icon">📂</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="orders.html" class="nav-item active">
+                    <span class="nav-item-icon">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="reservations.html" class="nav-item">
+                    <span class="nav-item-icon">📅</span>
+                    <span>Đặt bàn</span>
+                </a>
+                <a href="gallery.html" class="nav-item">
+                    <span class="nav-item-icon">🖼️</span>
+                    <span>Hình ảnh</span>
+                </a>
+                <a href="settings.html" class="nav-item" id="settingsNav">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="accounts.html" class="nav-item" id="accountsNav">
+                    <span class="nav-item-icon">👥</span>
+                    <span>Tài khoản</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">
+                    🚪 Đăng xuất
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Quản Lý Đơn Hàng</h1>
+                <p class="page-subtitle">Xem và quản lý các đơn hàng từ khách hàng</p>
+            </div>
+
+            <div id="alertBox"></div>
+
+            <!-- Filters -->
+            <div class="card">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <select id="statusFilter" class="form-select" style="width: 180px;">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="new">Mới</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="preparing">Đang chuẩn bị</option>
+                        <option value="delivering">Đang giao</option>
+                        <option value="completed">Hoàn thành</option>
+                        <option value="cancelled">Đã hủy</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="form-input" style="width: 180px;">
+                    <button class="btn btn-secondary" onclick="clearFilters()">Xóa bộ lọc</button>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>SĐT</th>
+                                <th>Loại</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thời gian</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Chi Tiết Đơn Hàng</h3>
+                <button class="modal-close" onclick="hideOrderModal()">×</button>
+            </div>
+            <div class="modal-body" id="orderDetailsBody">
+                <div class="loading">Đang tải...</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideOrderModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+        let orders = [];
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+            if (currentAdmin) {
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('settingsNav').style.display = 'none';
+                    document.getElementById('accountsNav').style.display = 'none';
+                }
+                await loadOrders();
+                setupEventListeners();
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('statusFilter').addEventListener('change', loadOrders);
+            document.getElementById('dateFilter').addEventListener('change', loadOrders);
+        }
+
+        async function loadOrders() {
+            try {
+                const status = document.getElementById('statusFilter').value;
+                const date = document.getElementById('dateFilter').value;
+
+                let url = '/api/orders?';
+                if (status) url += `status=${status}&`;
+                if (date) url += `date=${date}&`;
+
+                const response = await fetch(url, { credentials: 'include' });
+                const data = await response.json();
+                orders = data.orders;
+                displayOrders();
+            } catch (error) {
+                console.error('Load orders error:', error);
+                document.getElementById('ordersTableBody').innerHTML =
+                    '<tr><td colspan="8" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        function displayOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Chưa có đơn hàng</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><strong>${order.order_number}</strong></td>
+                    <td>${order.customer_name}</td>
+                    <td>${order.phone}</td>
+                    <td>${getOrderTypeLabel(order.order_type)}</td>
+                    <td>${AdminUI.formatCurrency(order.total)}</td>
+                    <td>
+                        <select class="form-select" style="padding: 4px 8px; font-size: 12px;"
+                                onchange="updateOrderStatus(${order.id}, this.value)">
+                            <option value="new" ${order.status === 'new' ? 'selected' : ''}>Mới</option>
+                            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Đang chuẩn bị</option>
+                            <option value="delivering" ${order.status === 'delivering' ? 'selected' : ''}>Đang giao</option>
+                            <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </td>
+                    <td>${AdminUI.formatDateTime(order.created_at)}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewOrderDetails(${order.id})" style="padding: 6px 12px;">
+                            👁️ Chi tiết
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getOrderTypeLabel(type) {
+            const labels = {
+                'dine-in': 'Tại nhà hàng',
+                'takeaway': 'Mang về',
+                'delivery': 'Giao hàng'
+            };
+            return labels[type] || type;
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                const response = await fetch(`/api/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    await loadOrders();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                    await loadOrders();
+                }
+            } catch (error) {
+                console.error('Update order status error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        async function viewOrderDetails(orderId) {
+            AdminUI.showModal('orderModal');
+            document.getElementById('orderDetailsBody').innerHTML = '<div class="loading">Đang tải...</div>';
+
+            try {
+                const response = await fetch(`/api/orders/${orderId}`, { credentials: 'include' });
+                const data = await response.json();
+                const order = data.order;
+
+                document.getElementById('orderDetailsBody').innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Thông tin đơn hàng</h4>
+                        <p><strong>Mã đơn:</strong> ${order.order_number}</p>
+                        <p><strong>Loại:</strong> ${getOrderTypeLabel(order.order_type)}</p>
+                        <p><strong>Trạng thái:</strong> ${AdminUI.getStatusBadge(order.status, 'order')}</p>
+                        <p><strong>Thời gian:</strong> ${AdminUI.formatDateTime(order.created_at)}</p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Thông tin khách hàng</h4>
+                        <p><strong>Họ và tên:</strong> ${order.customer_name}</p>
+                        <p><strong>Số điện thoại:</strong> ${order.phone}</p>
+                        ${order.email ? `<p><strong>Email:</strong> ${order.email}</p>` : ''}
+                        ${order.address ? `<p><strong>Địa chỉ:</strong> ${order.address}</p>` : ''}
+                        ${order.notes ? `<p><strong>Ghi chú:</strong> ${order.notes}</p>` : ''}
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Danh sách món ăn</h4>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f9fafb;">
+                                    <th style="padding: 8px; text-align: left; border-bottom: 2px solid #e5e7eb;">Món ăn</th>
+                                    <th style="padding: 8px; text-align: center; border-bottom: 2px solid #e5e7eb;">SL</th>
+                                    <th style="padding: 8px; text-align: right; border-bottom: 2px solid #e5e7eb;">Đơn giá</th>
+                                    <th style="padding: 8px; text-align: right; border-bottom: 2px solid #e5e7eb;">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${order.items.map(item => `
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb;">${item.menu_item_name}</td>
+                                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e5e7eb;">${item.quantity}</td>
+                                        <td style="padding: 8px; text-align: right; border-bottom: 1px solid #e5e7eb;">${AdminUI.formatCurrency(item.price)}</td>
+                                        <td style="padding: 8px; text-align: right; border-bottom: 1px solid #e5e7eb;">${AdminUI.formatCurrency(item.price * item.quantity)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Tạm tính:</span>
+                            <strong>${AdminUI.formatCurrency(order.subtotal)}</strong>
+                        </div>
+                        ${order.delivery_fee > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Phí giao hàng:</span>
+                                <strong>${AdminUI.formatCurrency(order.delivery_fee)}</strong>
+                            </div>
+                        ` : ''}
+                        ${order.discount > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Giảm giá:</span>
+                                <strong style="color: #ef4444;">-${AdminUI.formatCurrency(order.discount)}</strong>
+                            </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 2px solid #e5e7eb; font-size: 18px;">
+                            <strong>TỔNG CỘNG:</strong>
+                            <strong style="color: #667eea;">${AdminUI.formatCurrency(order.total)}</strong>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Load order details error:', error);
+                document.getElementById('orderDetailsBody').innerHTML =
+                    '<div class="alert alert-error">Không thể tải chi tiết đơn hàng</div>';
+            }
+        }
+
+        function hideOrderModal() {
+            AdminUI.hideModal('orderModal');
+        }
+
+        function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            loadOrders();
+        }
+
+        init();
+    </script>
+</body>
+</html>

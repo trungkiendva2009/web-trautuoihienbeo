@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tổng Quan - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active" data-page="dashboard">
+                    <span class="nav-item-icon">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="menu.html" class="nav-item" data-page="menu">
+                    <span class="nav-item-icon">🍽️</span>
+                    <span>Món ăn</span>
+                </a>
+                <a href="categories.html" class="nav-item" data-page="categories">
+                    <span class="nav-item-icon">📂</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="orders.html" class="nav-item" data-page="orders">
+                    <span class="nav-item-icon">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="reservations.html" class="nav-item" data-page="reservations">
+                    <span class="nav-item-icon">📅</span>
+                    <span>Đặt bàn</span>
+                </a>
+                <a href="gallery.html" class="nav-item" data-page="gallery">
+                    <span class="nav-item-icon">🖼️</span>
+                    <span>Hình ảnh</span>
+                </a>
+                <a href="settings.html" class="nav-item" data-page="settings" id="settingsNav">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="accounts.html" class="nav-item" data-page="accounts" id="accountsNav">
+                    <span class="nav-item-icon">👥</span>
+                    <span>Tài khoản</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">
+                    🚪 Đăng xuất
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Tổng Quan</h1>
+                <p class="page-subtitle">Chào mừng đến trang quản trị TRÂU TƯƠI HIỀN BÉO</p>
+            </div>
+
+            <div id="alertBox"></div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-label">Đơn hàng hôm nay</div>
+                    <div class="stat-value" id="statTodayOrders">0</div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Doanh thu hôm nay</div>
+                    <div class="stat-value" id="statTodayRevenue">0đ</div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-label">Đặt bàn hôm nay</div>
+                    <div class="stat-value" id="statTodayReservations">0</div>
+                </div>
+
+                <div class="stat-card info">
+                    <div class="stat-icon">🍽️</div>
+                    <div class="stat-label">Tổng số đơn hàng</div>
+                    <div class="stat-value" id="statTotalOrders">0</div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Đơn Hàng Gần Đây</h2>
+                    <a href="orders.html" class="btn btn-secondary">Xem tất cả</a>
+                </div>
+                <div class="table-container">
+                    <table id="recentOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Tổng tiền</th>
+                                <th>Loại</th>
+                                <th>Trạng thái</th>
+                                <th>Thời gian</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersBody">
+                            <tr>
+                                <td colspan="7" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Reservations -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Đặt Bàn Gần Đây</h2>
+                    <a href="reservations.html" class="btn btn-secondary">Xem tất cả</a>
+                </div>
+                <div class="table-container">
+                    <table id="recentReservationsTable">
+                        <thead>
+                            <tr>
+                                <th>Khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày</th>
+                                <th>Giờ</th>
+                                <th>Số khách</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentReservationsBody">
+                            <tr>
+                                <td colspan="6" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+
+            if (currentAdmin) {
+                // Show/hide menu items based on role
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('settingsNav').style.display = 'none';
+                    document.getElementById('accountsNav').style.display = 'none';
+                }
+
+                await loadDashboardData();
+            }
+        }
+
+        async function loadDashboardData() {
+            await Promise.all([
+                loadStatistics(),
+                loadRecentOrders(),
+                loadRecentReservations()
+            ]);
+        }
+
+        async function loadStatistics() {
+            try {
+                const [ordersRes, reservationsRes] = await Promise.all([
+                    fetch('/api/orders/stats/dashboard', { credentials: 'include' }),
+                    fetch('/api/reservations/stats/dashboard', { credentials: 'include' })
+                ]);
+
+                const ordersData = await ordersRes.json();
+                const reservationsData = await reservationsRes.json();
+
+                document.getElementById('statTodayOrders').textContent = ordersData.todayOrders;
+                document.getElementById('statTodayRevenue').textContent = AdminUI.formatCurrency(ordersData.todayRevenue);
+                document.getElementById('statTodayReservations').textContent = reservationsData.todayReservations;
+                document.getElementById('statTotalOrders').textContent = ordersData.totalOrders;
+            } catch (error) {
+                console.error('Load statistics error:', error);
+            }
+        }
+
+        async function loadRecentOrders() {
+            try {
+                const response = await fetch('/api/orders?limit=10', { credentials: 'include' });
+                const data = await response.json();
+
+                const tbody = document.getElementById('recentOrdersBody');
+
+                if (data.orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có đơn hàng</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.orders.slice(0, 5).map(order => `
+                    <tr>
+                        <td><strong>${order.order_number}</strong></td>
+                        <td>${order.customer_name}</td>
+                        <td>${order.phone}</td>
+                        <td>${AdminUI.formatCurrency(order.total)}</td>
+                        <td>${getOrderTypeLabel(order.order_type)}</td>
+                        <td>${AdminUI.getStatusBadge(order.status, 'order')}</td>
+                        <td>${AdminUI.formatDateTime(order.created_at)}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Load recent orders error:', error);
+                document.getElementById('recentOrdersBody').innerHTML =
+                    '<tr><td colspan="7" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        async function loadRecentReservations() {
+            try {
+                const response = await fetch('/api/reservations?limit=10', { credentials: 'include' });
+                const data = await response.json();
+
+                const tbody = document.getElementById('recentReservationsBody');
+
+                if (data.reservations.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Chưa có đặt bàn</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.reservations.slice(0, 5).map(res => `
+                    <tr>
+                        <td>${res.customer_name}</td>
+                        <td>${res.phone}</td>
+                        <td>${AdminUI.formatDate(res.reservation_date)}</td>
+                        <td>${res.reservation_time}</td>
+                        <td>${res.number_of_guests} người</td>
+                        <td>${AdminUI.getStatusBadge(res.status, 'reservation')}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Load recent reservations error:', error);
+                document.getElementById('recentReservationsBody').innerHTML =
+                    '<tr><td colspan="6" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        function getOrderTypeLabel(type) {
+            const labels = {
+                'dine-in': 'Ăn tại nhà hàng',
+                'takeaway': 'Mang về',
+                'delivery': 'Giao hàng'
+            };
+            return labels[type] || type;
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

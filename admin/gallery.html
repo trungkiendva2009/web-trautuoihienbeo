@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Hình Ảnh - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><span class="nav-item-icon">📊</span><span>Tổng quan</span></a>
+                <a href="menu.html" class="nav-item"><span class="nav-item-icon">🍽️</span><span>Món ăn</span></a>
+                <a href="categories.html" class="nav-item"><span class="nav-item-icon">📂</span><span>Danh mục</span></a>
+                <a href="orders.html" class="nav-item"><span class="nav-item-icon">🛒</span><span>Đơn hàng</span></a>
+                <a href="reservations.html" class="nav-item"><span class="nav-item-icon">📅</span><span>Đặt bàn</span></a>
+                <a href="gallery.html" class="nav-item active"><span class="nav-item-icon">🖼️</span><span>Hình ảnh</span></a>
+                <a href="settings.html" class="nav-item" id="settingsNav"><span class="nav-item-icon">⚙️</span><span>Cài đặt</span></a>
+                <a href="accounts.html" class="nav-item" id="accountsNav"><span class="nav-item-icon">👥</span><span>Tài khoản</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">🚪 Đăng xuất</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Quản Lý Hình Ảnh</h1>
+                <p class="page-subtitle">Quản lý thư viện ảnh nhà hàng</p>
+            </div>
+            <div id="alertBox"></div>
+            <div class="card">
+                <div class="alert alert-info">
+                    ℹ️ Chức năng upload ảnh yêu cầu cấu hình storage. Hiện tại bạn có thể nhập URL ảnh từ nguồn khác.
+                </div>
+                <button class="btn btn-primary" onclick="showAddModal()">➕ Thêm hình ảnh</button>
+            </div>
+            <div class="card">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;" id="galleryGrid">
+                    <div style="text-align: center; padding: 40px; grid-column: 1/-1;">Đang tải...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="galleryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Thêm Hình Ảnh</h3>
+                <button class="modal-close" onclick="hideGalleryModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="galleryForm">
+                    <input type="hidden" id="imageId">
+                    <div class="form-group">
+                        <label class="form-label">Tiêu đề <span style="color: red;">*</span></label>
+                        <input type="text" id="imageTitle" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL hình ảnh <span style="color: red;">*</span></label>
+                        <input type="url" id="imageUrl" class="form-input" required placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mô tả</label>
+                        <textarea id="imageDescription" class="form-textarea"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Danh mục</label>
+                        <input type="text" id="imageCategory" class="form-input" placeholder="Không gian, Món ăn, ...">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideGalleryModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="saveImage()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+        let images = [];
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+            if (currentAdmin) {
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('settingsNav').style.display = 'none';
+                    document.getElementById('accountsNav').style.display = 'none';
+                }
+                await loadImages();
+            }
+        }
+
+        async function loadImages() {
+            try {
+                const response = await fetch('/api/gallery');
+                const data = await response.json();
+                images = data.images;
+                displayImages();
+            } catch (error) {
+                console.error('Load images error:', error);
+                document.getElementById('galleryGrid').innerHTML = '<div style="grid-column: 1/-1; text-align: center;">Không thể tải dữ liệu</div>';
+            }
+        }
+
+        function displayImages() {
+            const grid = document.getElementById('galleryGrid');
+            if (images.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Chưa có hình ảnh</div>';
+                return;
+            }
+
+            grid.innerHTML = images.map(img => `
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                    <div style="height: 200px; background: #f9fafb; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="${img.image_url}" alt="${img.title}" style="max-width: 100%; max-height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+                    </div>
+                    <div style="padding: 15px;">
+                        <h4 style="margin-bottom: 5px;">${img.title}</h4>
+                        ${img.description ? `<p style="font-size: 13px; color: #6b7280; margin-bottom: 10px;">${img.description}</p>` : ''}
+                        ${img.category ? `<span class="badge badge-secondary">${img.category}</span>` : ''}
+                        <div style="margin-top: 10px; display: flex; gap: 5px;">
+                            <button class="btn btn-secondary" onclick="editImage(${img.id})" style="flex: 1; padding: 6px;">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteImage(${img.id})" style="flex: 1; padding: 6px;">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddModal() {
+            document.getElementById('modalTitle').textContent = 'Thêm Hình Ảnh';
+            document.getElementById('galleryForm').reset();
+            document.getElementById('imageId').value = '';
+            AdminUI.showModal('galleryModal');
+        }
+
+        function editImage(id) {
+            const image = images.find(img => img.id === id);
+            if (!image) return;
+
+            document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Hình Ảnh';
+            document.getElementById('imageId').value = image.id;
+            document.getElementById('imageTitle').value = image.title;
+            document.getElementById('imageUrl').value = image.image_url;
+            document.getElementById('imageDescription').value = image.description || '';
+            document.getElementById('imageCategory').value = image.category || '';
+            AdminUI.showModal('galleryModal');
+        }
+
+        function hideGalleryModal() {
+            AdminUI.hideModal('galleryModal');
+        }
+
+        async function saveImage() {
+            const id = document.getElementById('imageId').value;
+            const title = document.getElementById('imageTitle').value.trim();
+            const image_url = document.getElementById('imageUrl').value.trim();
+            const description = document.getElementById('imageDescription').value.trim();
+            const category = document.getElementById('imageCategory').value.trim();
+
+            if (!title || !image_url) {
+                AdminUI.showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+
+            try {
+                const url = id ? `/api/gallery/${id}` : '/api/gallery';
+                const method = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ title, image_url, description, category })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    hideGalleryModal();
+                    await loadImages();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Save image error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        async function deleteImage(id) {
+            if (!AdminUI.confirmDelete('Bạn có chắc chắn muốn xóa hình ảnh này?')) return;
+
+            try {
+                const response = await fetch(`/api/gallery/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    await loadImages();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Delete image error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

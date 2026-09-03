@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Món Ăn - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <span class="nav-item-icon">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="menu.html" class="nav-item active">
+                    <span class="nav-item-icon">🍽️</span>
+                    <span>Món ăn</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-item-icon">📂</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <span class="nav-item-icon">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="reservations.html" class="nav-item">
+                    <span class="nav-item-icon">📅</span>
+                    <span>Đặt bàn</span>
+                </a>
+                <a href="gallery.html" class="nav-item">
+                    <span class="nav-item-icon">🖼️</span>
+                    <span>Hình ảnh</span>
+                </a>
+                <a href="settings.html" class="nav-item" id="settingsNav">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="accounts.html" class="nav-item" id="accountsNav">
+                    <span class="nav-item-icon">👥</span>
+                    <span>Tài khoản</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">
+                    🚪 Đăng xuất
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Quản Lý Món Ăn</h1>
+                    <p class="page-subtitle">Thêm, sửa, xóa món ăn trong thực đơn</p>
+                </div>
+            </div>
+
+            <div id="alertBox"></div>
+
+            <!-- Filters and Actions -->
+            <div class="card">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm món ăn..."
+                           class="form-input" style="flex: 1; min-width: 200px;">
+                    <select id="categoryFilter" class="form-select" style="width: 200px;">
+                        <option value="">Tất cả danh mục</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="showAddModal()">
+                        ➕ Thêm món ăn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menu Items Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Tên món</th>
+                                <th>Danh mục</th>
+                                <th>Giá</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="menuModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Thêm Món Ăn</h3>
+                <button class="modal-close" onclick="hideMenuModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="menuForm">
+                    <input type="hidden" id="menuId">
+
+                    <div class="form-group">
+                        <label class="form-label">Tên món <span style="color: red;">*</span></label>
+                        <input type="text" id="menuName" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Danh mục <span style="color: red;">*</span></label>
+                        <select id="menuCategory" class="form-select" required>
+                            <option value="">Chọn danh mục</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Giá (VNĐ) <span style="color: red;">*</span></label>
+                        <input type="number" id="menuPrice" class="form-input" required min="0" step="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mô tả</label>
+                        <textarea id="menuDescription" class="form-textarea"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Icon/Emoji</label>
+                        <input type="text" id="menuIcon" class="form-input" placeholder="🥩">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="menuAvailable" class="form-select">
+                            <option value="1">Đang bán</option>
+                            <option value="0">Tạm hết</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideMenuModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="saveMenu()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+        let categories = [];
+        let menuItems = [];
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+            if (currentAdmin) {
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('settingsNav').style.display = 'none';
+                    document.getElementById('accountsNav').style.display = 'none';
+                }
+                await loadCategories();
+                await loadMenuItems();
+                setupEventListeners();
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterMenuItems);
+            document.getElementById('categoryFilter').addEventListener('change', filterMenuItems);
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/categories');
+                const data = await response.json();
+                categories = data.categories;
+
+                // Populate category filter
+                const filterSelect = document.getElementById('categoryFilter');
+                filterSelect.innerHTML = '<option value="">Tất cả danh mục</option>' +
+                    categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+
+                // Populate category select in modal
+                const modalSelect = document.getElementById('menuCategory');
+                modalSelect.innerHTML = '<option value="">Chọn danh mục</option>' +
+                    categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+            } catch (error) {
+                console.error('Load categories error:', error);
+            }
+        }
+
+        async function loadMenuItems() {
+            try {
+                const response = await fetch('/api/menu');
+                const data = await response.json();
+                menuItems = data.items;
+                displayMenuItems(menuItems);
+            } catch (error) {
+                console.error('Load menu items error:', error);
+                document.getElementById('menuTableBody').innerHTML =
+                    '<tr><td colspan="6" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        function displayMenuItems(items) {
+            const tbody = document.getElementById('menuTableBody');
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Chưa có món ăn</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td style="font-size: 32px;">${item.icon || '🍽️'}</td>
+                    <td>
+                        <strong>${item.name}</strong>
+                        ${item.description ? `<br><small style="color: #666;">${item.description}</small>` : ''}
+                    </td>
+                    <td>${item.category_name || '-'}</td>
+                    <td>${AdminUI.formatCurrency(item.price)}</td>
+                    <td>${AdminUI.getStatusBadge(item.available, 'available')}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editMenu(${item.id})" style="padding: 6px 12px; margin-right: 5px;">
+                            ✏️
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteMenu(${item.id}, '${item.name}')" style="padding: 6px 12px;">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterMenuItems() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const categoryId = document.getElementById('categoryFilter').value;
+
+            let filtered = menuItems;
+
+            if (search) {
+                filtered = filtered.filter(item =>
+                    item.name.toLowerCase().includes(search) ||
+                    (item.description && item.description.toLowerCase().includes(search))
+                );
+            }
+
+            if (categoryId) {
+                filtered = filtered.filter(item => item.category_id == categoryId);
+            }
+
+            displayMenuItems(filtered);
+        }
+
+        function showAddModal() {
+            document.getElementById('modalTitle').textContent = 'Thêm Món Ăn';
+            document.getElementById('menuForm').reset();
+            document.getElementById('menuId').value = '';
+            document.getElementById('menuAvailable').value = '1';
+            AdminUI.showModal('menuModal');
+        }
+
+        async function editMenu(id) {
+            const item = menuItems.find(m => m.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Món Ăn';
+            document.getElementById('menuId').value = item.id;
+            document.getElementById('menuName').value = item.name;
+            document.getElementById('menuCategory').value = item.category_id;
+            document.getElementById('menuPrice').value = item.price;
+            document.getElementById('menuDescription').value = item.description || '';
+            document.getElementById('menuIcon').value = item.icon || '';
+            document.getElementById('menuAvailable').value = item.available;
+
+            AdminUI.showModal('menuModal');
+        }
+
+        function hideMenuModal() {
+            AdminUI.hideModal('menuModal');
+        }
+
+        async function saveMenu() {
+            const id = document.getElementById('menuId').value;
+            const name = document.getElementById('menuName').value.trim();
+            const category_id = document.getElementById('menuCategory').value;
+            const price = parseFloat(document.getElementById('menuPrice').value);
+            const description = document.getElementById('menuDescription').value.trim();
+            const icon = document.getElementById('menuIcon').value.trim();
+            const available = document.getElementById('menuAvailable').value;
+
+            if (!name || !category_id || !price) {
+                AdminUI.showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+
+            try {
+                const url = id ? `/api/menu/${id}` : '/api/menu';
+                const method = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, category_id, price, description, icon, available })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    hideMenuModal();
+                    await loadMenuItems();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Save menu error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        async function deleteMenu(id, name) {
+            if (!AdminUI.confirmDelete(`Bạn có chắc chắn muốn xóa món "${name}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/menu/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    await loadMenuItems();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Delete menu error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

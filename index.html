@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trâu Tươi Hiền Béo - Đậm Đà Hương Vị Việt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #7A2E2E;
+            --primary-hover: #9A3E3E;
+            --secondary: #D9A441;
+            --secondary-hover: #E9B451;
+            --green: #2F5D3A;
+            --bg-cream: #F7F1E5;
+            --bg-light: #FFF8EE;
+            --text-dark: #2B2118;
+            --footer-bg: #1A0F0A;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        .announcement-bar {
+            background: var(--primary);
+            color: white;
+            padding: 8px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .announcement-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll 30s linear infinite;
+            padding-left: 100%;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        nav {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(122, 46, 46, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--text-dark);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+            transform: translateY(-2px);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-dark);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2B0A0A 0%, #1A3A1A 50%, #0A1A0A 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(217, 164, 65, 0.15), transparent 70%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hero-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        .section-alt {
+            background: var(--bg-cream);
+        }
+
+        .section-light {
+            background: var(--bg-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(122, 46, 46, 0.15);
+            border-color: var(--primary);
+        }
+
+        .category-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .dishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .dish-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .dish-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .dish-image {
+            background: linear-gradient(135deg, var(--bg-cream), var(--bg-light));
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+
+        .dish-content {
+            padding: 1.5rem;
+        }
+
+        .dish-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .dish-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .dish-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dish-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .btn-add-cart {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--primary-hover);
+        }
+
+        .atmosphere {
+            background: var(--green);
+            color: white;
+            text-align: center;
+        }
+
+        .atmosphere h2 {
+            color: var(--secondary);
+        }
+
+        .quick-info {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .quick-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .info-icon {
+            font-size: 2rem;
+        }
+
+        footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.7;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 0.5rem;
+        }
+
+        .mobile-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .mobile-nav-item {
+            text-align: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .mobile-nav-item:hover {
+            background: var(--bg-cream);
+        }
+
+        .mobile-nav-item .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-nav-item .label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .menu-search {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--bg-cream);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--bg-cream);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .cart-page, .checkout-page, .reservation-page, .about-page, .contact-page, .admin-page, .confirmation-page {
+            padding: 3rem 2rem;
+            min-height: 80vh;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .cart-empty-icon {
+            font-size: 5rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .cart-items {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cart-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-item-icon {
+            font-size: 3rem;
+            background: var(--bg-cream);
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .qty-btn {
+            background: var(--bg-cream);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .qty-btn:hover {
+            background: var(--secondary);
+        }
+
+        .qty-display {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .cart-item-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .cart-item-remove:hover {
+            background: #c82333;
+        }
+
+        .cart-summary {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: var(--bg-cream);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .summary-row.total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            padding-top: 1rem;
+            border-top: 2px solid rgba(122, 46, 46, 0.2);
+        }
+
+        .order-type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .order-type-option {
+            background: white;
+            border: 3px solid var(--bg-cream);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .order-type-option:hover {
+            border-color: var(--secondary);
+        }
+
+        .order-type-option.selected {
+            border-color: var(--primary);
+            background: var(--bg-cream);
+        }
+
+        .order-type-option .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--bg-cream);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkout-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .order-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .order-timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--bg-cream);
+            z-index: 0;
+        }
+
+        .timeline-step {
+            background: white;
+            border: 4px solid var(--bg-cream);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-step.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .timeline-step-label {
+            position: absolute;
+            top: 50px;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .order-id {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .contact-card .icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .admin-login {
+            max-width: 400px;
+            margin: 4rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .admin-dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--bg-cream);
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-new {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+
+        .status-confirmed {
+            background: #74b9ff;
+            color: #0984e3;
+        }
+
+        .status-preparing {
+            background: #a29bfe;
+            color: #6c5ce7;
+        }
+
+        .status-completed {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .mobile-nav {
+                display: block;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .dishes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-timeline {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .data-table {
+                overflow-x: auto;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement-bar">
+        <div class="announcement-content">
+            🥩 Trâu tươi ngon – Đậm đà hương vị Việt | 🔥 Nhận đặt món mang về | 🍲 Lẩu trâu tươi nóng hổi | 📞 Hotline: 0986 710 752 | 🕒 Mở cửa từ 06:00 – 02:00
+        </div>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="navigateTo('home')">
+                🐃 TRÂU TƯƠI HIỀN BÉO
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" onclick="navigateTo('home')">Trang chủ</a></li>
+                <li><a href="#" onclick="navigateTo('menu')">Thực đơn</a></li>
+                <li><a href="#" onclick="navigateTo('reservation')">Đặt bàn</a></li>
+                <li><a href="#" onclick="navigateTo('about')">Giới thiệu</a></li>
+                <li><a href="#" onclick="navigateTo('contact')">Liên hệ</a></li>
+                <li>
+                    <div class="cart-icon" onclick="navigateTo('cart')">
+                        🛒
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </div>
+                </li>
+                <li><button class="btn-primary" onclick="navigateTo('menu')">ĐẶT MÓN NGAY</button></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div id="homePage" class="page active">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>TRÂU TƯƠI HIỀN BÉO</h1>
+                <div class="hero-subtitle">Đậm Đà Hương Vị Việt</div>
+                <p class="hero-text">
+                    Những món ăn đặc sắc từ trâu tươi, được chế biến đậm đà theo hương vị truyền thống,
+                    trong không gian xanh gần gũi với thiên nhiên.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="navigateTo('menu')">KHÁM PHÁ THỰC ĐƠN</button>
+                    <button class="btn-secondary" onclick="navigateTo('menu')">ĐẶT MÓN NGAY</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <div class="container">
+                <h2 class="section-title">Danh Mục Món Ăn</h2>
+                <div class="categories">
+                    <div class="category-card" onclick="navigateTo('menu', 'Các món về trâu')">
+                        <div class="category-icon">🥩</div>
+                        <h3>CÁC MÓN VỀ TRÂU</h3>
+                        <p>Những món ăn đặc sắc được chế biến từ trâu tươi.</p>
+                    </div>
+                    <div class="category-card" onclick="navigateTo('menu', 'Lẩu')">
+                        <div class="category-icon">🍲</div>
+                        <h3>LẨU</h3>
+                        <p>Lẩu nóng hổi, thơm ngon, phù hợp cho gia đình và bạn bè.</p>
+                    </div>
+                    <div class="category-card" onclick="navigateTo('menu', 'Các món phở')">
+                        <div class="category-icon">🍜</div>
+                        <h3>CÁC MÓN PHỞ</h3>
+                        <p>Phở và những món ăn đậm đà từ thịt trâu tươi.</p>
+                    </div>
+                    <div class="category-card" onclick="navigateTo('menu', 'Đồ uống')">
+                        <div class="category-icon">🥤</div>
+                        <h3>ĐỒ UỐNG</h3>
+                        <p>Đồ uống giải khát và các loại rượu truyền thống.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Món Ăn Được Yêu Thích</h2>
+                <div class="dishes-grid" id="featuredDishes"></div>
+            </div>
+        </section>
+
+        <section class="section atmosphere">
+            <div class="container">
+                <h2 class="section-title">KHÔNG GIAN TRÂU TƯƠI HIỀN BÉO</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; line-height: 1.8;">
+                    Không chỉ là những món ăn ngon, Trâu Tươi Hiền Béo còn mang đến một không gian
+                    gần gũi với thiên nhiên, ấm cúng và thoải mái cho gia đình và bạn bè.
+                    Không gian sân vườn xanh mát với tre, hoa và ánh đèn ấm áp vào buổi tối.
+                </p>
+            </div>
+        </section>
+
+        <div class="quick-info">
+            <div class="quick-info-grid">
+                <div class="info-item">
+                    <span class="info-icon">📍</span>
+                    <div>
+                        <strong>Địa chỉ</strong><br>
+                        Số 303 phố Phúc Lâm, Nếnh, Việt Yên, Bắc Giang
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📞</span>
+                    <div>
+                        <strong>Hotline</strong><br>
+                        0986 710 752
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">🕒</span>
+                    <div>
+                        <strong>Giờ mở cửa</strong><br>
+                        06:00 – 02:00
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="menuPage" class="page">
+        <div class="section">
+            <div class="container">
+                <h1 class="page-title">THỰC ĐƠN</h1>
+                <p style="text-align: center; margin-bottom: 2rem; font-size: 1.1rem;">
+                    Khám phá những món ăn đặc sắc tại Trâu Tươi Hiền Béo.
+                </p>
+
+                <div class="menu-search">
+                    <input type="text" class="search-input" id="menuSearch" placeholder="Tìm kiếm món ăn...">
+                </div>
+
+                <div class="category-tabs" id="categoryTabs"></div>
+
+                <div class="dishes-grid" id="menuDishes"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartPage" class="page cart-page">
+        <div class="container">
+            <h1 class="page-title">GIỎ HÀNG</h1>
+            <div id="cartContent"></div>
+        </div>
+    </div>
+
+    <div id="checkoutPage" class="page checkout-page">
+        <div class="container">
+            <h1 class="page-title">THANH TOÁN</h1>
+            <div class="checkout-form">
+                <h3 style="margin-bottom: 1.5rem;">Thông tin khách hàng</h3>
+                <div class="form-group">
+                    <label>Họ và tên *</label>
+                    <input type="text" class="form-input" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại *</label>
+                    <input type="tel" class="form-input" id="customerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-input" id="customerEmail">
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem;">Hình thức đặt món</h3>
+                <div class="order-type-selector">
+                    <div class="order-type-option selected" onclick="selectOrderType('dine-in')">
+                        <div class="icon">🍽</div>
+                        <div>Ăn tại nhà hàng</div>
+                    </div>
+                    <div class="order-type-option" onclick="selectOrderType('takeaway')">
+                        <div class="icon">🥡</div>
+                        <div>Mang về</div>
+                    </div>
+                    <div class="order-type-option" onclick="selectOrderType('delivery')">
+                        <div class="icon">🛵</div>
+                        <div>Giao hàng</div>
+                    </div>
+                </div>
+
+                <div id="deliveryAddressGroup" class="form-group hidden">
+                    <label>Địa chỉ giao hàng *</label>
+                    <textarea class="form-input" id="deliveryAddress"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ghi chú cho nhà hàng</label>
+                    <textarea class="form-input" id="orderNotes" placeholder="Ví dụ: Không cay, ít hành..."></textarea>
+                    <small>Yêu cầu đặc biệt sẽ được nhà hàng hỗ trợ tùy theo khả năng phục vụ.</small>
+                </div>
+
+                <div id="checkoutSummary" style="background: var(--bg-cream); padding: 1.5rem; border-radius: 8px; margin: 2rem 0;"></div>
+
+                <button class="btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;" onclick="confirmOrder()">
+                    XÁC NHẬN ĐƠN HÀNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmationPage" class="page confirmation-page">
+        <div class="container" style="max-width: 800px; text-align: center;">
+            <div class="success-icon">✅</div>
+            <h1 class="page-title">CẢM ƠN BẠN ĐÃ ĐẶT MÓN!</h1>
+            <div class="order-id" id="displayOrderId"></div>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                Nhà hàng sẽ xác nhận đơn hàng trong thời gian sớm nhất.
+            </p>
+
+            <div class="order-timeline">
+                <div class="timeline-step active">
+                    <div>1</div>
+                    <div class="timeline-step-label">Đã nhận đơn</div>
+                </div>
+                <div class="timeline-step">
+                    <div>2</div>
+                    <div class="timeline-step-label">Đã xác nhận</div>
+                </div>
+                <div class="timeline-step">
+                    <div>3</div>
+                    <div class="timeline-step-label">Đang chuẩn bị</div>
+                </div>
+                <div class="timeline-step">
+                    <div>4</div>
+                    <div class="timeline-step-label">Hoàn thành</div>
+                </div>
+            </div>
+
+            <div id="orderDetailsDisplay" style="background: white; padding: 2rem; border-radius: 12px; margin: 2rem 0; text-align: left;"></div>
+
+            <button class="btn-primary" onclick="navigateTo('home')">VỀ TRANG CHỦ</button>
+        </div>
+    </div>
+
+    <div id="reservationPage" class="page reservation-page">
+        <div class="container">
+            <h1 class="page-title">ĐẶT BÀN</h1>
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label>Họ và tên *</label>
+                    <input type="text" class="form-input" id="reservationName" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại *</label>
+                    <input type="tel" class="form-input" id="reservationPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Ngày *</label>
+                    <input type="date" class="form-input" id="reservationDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Giờ *</label>
+                    <input type="time" class="form-input" id="reservationTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Số lượng khách *</label>
+                    <input type="number" class="form-input" id="reservationGuests" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Ghi chú</label>
+                    <textarea class="form-input" id="reservationNotes" placeholder="Ví dụ: Gia đình có trẻ nhỏ, muốn ngồi ngoài trời..."></textarea>
+                </div>
+                <button class="btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;" onclick="submitReservation()">
+                    XÁC NHẬN ĐẶT BÀN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aboutPage" class="page about-page">
+        <div class="container" style="max-width: 900px;">
+            <h1 class="page-title">CÂU CHUYỆN TRÂU TƯƠI HIỀN BÉO</h1>
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); line-height: 1.9; font-size: 1.1rem;">
+                <p style="margin-bottom: 1.5rem;">
+                    Trâu Tươi Hiền Béo mong muốn mang đến những món ăn thơm ngon từ nguyên liệu tươi,
+                    được chế biến theo hương vị gần gũi với ẩm thực Việt Nam.
+                </p>
+                <p style="margin-bottom: 1.5rem;">
+                    Không chỉ chú trọng đến món ăn, nhà hàng còn tạo nên một không gian
+                    xanh mát, gần gũi với thiên nhiên, để mỗi bữa ăn trở thành một trải nghiệm
+                    ấm cúng cùng gia đình và bạn bè.
+                </p>
+                <p style="margin-bottom: 1.5rem;">
+                    Với không gian sân vườn rộng rãi, tre xanh, hoa tươi và ánh đèn ấm áp vào buổi tối,
+                    Trâu Tươi Hiền Béo là điểm đến lý tưởng cho những bữa tiệc gia đình,
+                    gặp gỡ bạn bè hay những dịp đặc biệt.
+                </p>
+                <p>
+                    Chúng tôi tự hào phục vụ những món ăn đậm đà hương vị Việt,
+                    đặc biệt là các món từ trâu tươi - đặc sản vùng miền Bắc Giang.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contactPage" class="page contact-page">
+        <div class="container">
+            <h1 class="page-title">LIÊN HỆ</h1>
+
+            <div class="contact-info">
+                <div class="contact-card">
+                    <div class="icon">📍</div>
+                    <h3>ĐỊA CHỈ</h3>
+                    <p>Số 303 phố Phúc Lâm,<br>Nếnh, Việt Yên,<br>Bắc Giang, Việt Nam</p>
+                </div>
+                <div class="contact-card">
+                    <div class="icon">📞</div>
+                    <h3>HOTLINE</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">0986 710 752</p>
+                    <button class="btn-primary" onclick="window.location.href='tel:0986710752'">GỌI NGAY</button>
+                </div>
+                <div class="contact-card">
+                    <div class="icon">🕒</div>
+                    <h3>GIỜ MỞ CỬA</h3>
+                    <p style="font-size: 1.2rem;">06:00 – 02:00</p>
+                    <p style="margin-top: 0.5rem; color: #666;">Hàng ngày</p>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3711.234!2d106.1234!3d21.2345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDE0JzA0LjYiTiAxMDbCsDA3JzI0LjMiRQ!5e0!3m2!1svi!2s!4v1234567890" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn-secondary" onclick="window.open('https://maps.google.com/?q=303+Phúc+Lâm+Nếnh+Việt+Yên+Bắc+Giang', '_blank')">
+                    CHỈ ĐƯỜNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminPage" class="page admin-page">
+        <div class="container">
+            <div id="adminLogin" class="admin-login">
+                <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">ADMIN LOGIN</h2>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" class="form-input" id="adminPassword">
+                </div>
+                <button class="btn-primary" style="width: 100%;" onclick="adminLogin()">ĐĂNG NHẬP</button>
+            </div>
+
+            <div id="adminDashboard" class="admin-dashboard hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1 class="page-title" style="margin: 0;">ADMIN DASHBOARD</h1>
+                    <button class="btn-secondary" onclick="adminLogout()">ĐĂNG XUẤT</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statOrdersToday">0</div>
+                        <div class="stat-label">Đơn hàng hôm nay</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statRevenue">0đ</div>
+                        <div class="stat-label">Doanh thu hôm nay</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statTotalOrders">0</div>
+                        <div class="stat-label">Tổng số đơn hàng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statPopularItem">-</div>
+                        <div class="stat-label">Món được đặt nhiều nhất</div>
+                    </div>
+                </div>
+
+                <h2 style="margin-bottom: 1rem;">Đơn hàng</h2>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>SĐT</th>
+                                <th>Tổng tiền</th>
+                                <th>Loại</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody"></tbody>
+                    </table>
+                </div>
+
+                <h2 style="margin-bottom: 1rem;">Đặt bàn</h2>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên</th>
+                                <th>SĐT</th>
+                                <th>Ngày</th>
+                                <th>Giờ</th>
+                                <th>Số khách</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-nav">
+        <div class="mobile-nav-grid">
+            <div class="mobile-nav-item" onclick="navigateTo('home')">
+                <span class="icon">🏠</span>
+                <span class="label">Trang chủ</span>
+            </div>
+            <div class="mobile-nav-item" onclick="navigateTo('menu')">
+                <span class="icon">🍜</span>
+                <span class="label">Thực đơn</span>
+            </div>
+            <div class="mobile-nav-item" onclick="navigateTo('contact')">
+                <span class="icon">📞</span>
+                <span class="label">Liên hệ</span>
+            </div>
+            <div class="mobile-nav-item" onclick="navigateTo('cart')">
+                <span class="icon">🛒</span>
+                <span class="label">Giỏ hàng</span>
+                <span class="cart-badge" id="mobileCartBadge" style="position: absolute; top: 8px; right: 20px;">0</span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>🐃 TRÂU TƯƠI HIỀN BÉO</h4>
+                <p>Đậm đà hương vị Việt</p>
+            </div>
+            <div class="footer-section">
+                <h4>Liên kết</h4>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="navigateTo('home')">Trang chủ</a></li>
+                    <li><a href="#" onclick="navigateTo('menu')">Thực đơn</a></li>
+                    <li><a href="#" onclick="navigateTo('reservation')">Đặt bàn</a></li>
+                    <li><a href="#" onclick="navigateTo('about')">Giới thiệu</a></li>
+                    <li><a href="#" onclick="navigateTo('contact')">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Liên hệ</h4>
+                <p>📞 0986 710 752</p>
+                <p>📍 Số 303 phố Phúc Lâm,<br>Nếnh, Việt Yên, Bắc Giang</p>
+            </div>
+            <div class="footer-section">
+                <h4>Giờ mở cửa</h4>
+                <p>🕒 06:00 – 02:00<br>Hàng ngày</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Trâu Tươi Hiền Béo. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        let menuData = {};
+        let categories = [];
+        let cart = [];
+        let currentOrderType = 'dine-in';
+
+        // Load menu data from API
+        async function loadMenuData() {
+            try {
+                const [categoriesRes, menuRes] = await Promise.all([
+                    fetch('/api/categories'),
+                    fetch('/api/menu')
+                ]);
+
+                const categoriesData = await categoriesRes.json();
+                const menuDataRes = await menuRes.json();
+
+                categories = categoriesData.categories || [];
+                const menuItems = menuDataRes.items || [];
+
+                // Organize menu items by category
+                menuData = {};
+                categories.forEach(cat => {
+                    menuData[cat.name] = menuItems
+                        .filter(item => item.category_id === cat.id && item.available)
+                        .map(item => ({
+                            id: item.id,
+                            name: item.name,
+                            price: item.price,
+                            description: item.description || '',
+                            icon: item.icon || '🍽️'
+                        }));
+                });
+
+                renderFeaturedDishes();
+            } catch (error) {
+                console.error('Failed to load menu data:', error);
+            }
+        }
+
+        function navigateTo(page, category = null) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page + 'Page').classList.add('active');
+
+            if (page === 'menu') {
+                renderMenu(category);
+            } else if (page === 'cart') {
+                renderCart();
+            } else if (page === 'checkout') {
+                renderCheckoutSummary();
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function renderFeaturedDishes() {
+            const container = document.getElementById('featuredDishes');
+
+            // Get all dishes from all categories
+            const allDishes = Object.values(menuData).flat();
+
+            // Take first 6 available dishes as featured
+            const featured = allDishes.slice(0, 6);
+
+            if (featured.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Đang tải thực đơn...</p>';
+                return;
+            }
+
+            container.innerHTML = featured.map(dish => createDishCard(dish)).join('');
+        }
+
+        function createDishCard(dish) {
+            const priceDisplay = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dish.price);
+
+            return `
+                <div class="dish-card">
+                    <div class="dish-image">${dish.icon}</div>
+                    <div class="dish-content">
+                        <h3>${dish.name}</h3>
+                        ${dish.description ? `<p class="dish-description">${dish.description}</p>` : ''}
+                        <div class="dish-footer">
+                            <span class="dish-price">${priceDisplay}</span>
+                            <button class="btn-add-cart" onclick="addToCart(${dish.id})">+ THÊM</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMenu(initialCategory = null) {
+            const tabsContainer = document.getElementById('categoryTabs');
+            const categories = Object.keys(menuData);
+
+            tabsContainer.innerHTML = categories.map(cat =>
+                `<div class="category-tab ${initialCategory === cat || (!initialCategory && cat === categories[0]) ? 'active' : ''}"
+                      onclick="filterByCategory('${cat}')">${cat.toUpperCase()}</div>`
+            ).join('');
+
+            filterByCategory(initialCategory || categories[0]);
+
+            document.getElementById('menuSearch').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                searchMenu(searchTerm);
+            });
+        }
+
+        function filterByCategory(category) {
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase() === category.toLowerCase()) {
+                    tab.classList.add('active');
+                }
+            });
+
+            const container = document.getElementById('menuDishes');
+            const dishes = menuData[category];
+            container.innerHTML = dishes.map(dish => createDishCard(dish)).join('');
+        }
+
+        function searchMenu(term) {
+            if (!term) {
+                const activeTab = document.querySelector('.category-tab.active');
+                const category = activeTab ? activeTab.textContent.toLowerCase() : Object.keys(menuData)[0];
+                filterByCategory(category);
+                return;
+            }
+
+            const allDishes = Object.values(menuData).flat();
+            const filtered = allDishes.filter(dish =>
+                dish.name.toLowerCase().includes(term) ||
+                (dish.description && dish.description.toLowerCase().includes(term))
+            );
+
+            const container = document.getElementById('menuDishes');
+            container.innerHTML = filtered.length
+                ? filtered.map(dish => createDishCard(dish)).join('')
+                : '<p style="text-align: center; grid-column: 1/-1; font-size: 1.2rem; color: #666;">Không tìm thấy món ăn.</p>';
+        }
+
+        function addToCart(dishId) {
+            const allDishes = Object.values(menuData).flat();
+            const dish = allDishes.find(d => d.id === dishId);
+
+            const existingItem = cart.find(item => item.id === dishId);
+            if (existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({ ...dish, qty: 1 });
+            }
+
+            updateCartBadge();
+
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; top: 100px; right: 20px; background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.2);';
+            notification.textContent = `✓ Đã thêm ${dish.name} vào giỏ hàng`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').textContent = totalItems;
+            document.getElementById('mobileCartBadge').textContent = totalItems;
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartContent');
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <h2>Giỏ hàng của bạn đang trống</h2>
+                        <p>Hãy khám phá thực đơn và thêm món ăn yêu thích!</p>
+                        <button class="btn-primary" onclick="navigateTo('menu')" style="margin-top: 1rem;">XEM THỰC ĐƠN</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const deliveryFee = currentOrderType === 'delivery' ? 30000 : 0;
+            const total = subtotal + deliveryFee;
+
+            container.innerHTML = `
+                <div class="cart-items">
+                    ${cart.map((item, index) => {
+                        const priceDisplay = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
+
+                        return `
+                            <div class="cart-item">
+                                <div class="cart-item-icon">${item.icon}</div>
+                                <div class="cart-item-details">
+                                    <div class="cart-item-name">${item.name}</div>
+                                    <div class="cart-item-price">${priceDisplay}</div>
+                                    <div class="quantity-controls">
+                                        <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                                        <span class="qty-display">${item.qty}</span>
+                                        <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                                    </div>
+                                </div>
+                                <button class="cart-item-remove" onclick="removeFromCart(${index})">Xóa</button>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Tạm tính</span>
+                        <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(subtotal)}</span>
+                    </div>
+                    ${deliveryFee > 0 ? `
+                        <div class="summary-row">
+                            <span>Phí giao hàng</span>
+                            <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(deliveryFee)}</span>
+                        </div>
+                    ` : ''}
+                    <div class="summary-row total">
+                        <span>TỔNG CỘNG</span>
+                        <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</span>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn-secondary" onclick="navigateTo('menu')" style="margin-right: 1rem;">TIẾP TỤC ĐẶT MÓN</button>
+                    <button class="btn-primary" onclick="navigateTo('checkout')">THANH TOÁN</button>
+                </div>
+            `;
+        }
+
+        function updateQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartBadge();
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            renderCart();
+        }
+
+        function selectOrderType(type) {
+            currentOrderType = type;
+            document.querySelectorAll('.order-type-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.closest('.order-type-option').classList.add('selected');
+
+            const deliveryGroup = document.getElementById('deliveryAddressGroup');
+            if (type === 'delivery') {
+                deliveryGroup.classList.remove('hidden');
+            } else {
+                deliveryGroup.classList.add('hidden');
+            }
+
+            renderCheckoutSummary();
+        }
+
+        function renderCheckoutSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const deliveryFee = currentOrderType === 'delivery' ? 30000 : 0;
+            const total = subtotal + deliveryFee;
+
+            document.getElementById('checkoutSummary').innerHTML = `
+                <h4>Tóm tắt đơn hàng</h4>
+                ${cart.map(item => `
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>${item.name} x${item.qty}</span>
+                        <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.qty)}</span>
+                    </div>
+                `).join('')}
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                    <span>Tạm tính</span>
+                    <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(subtotal)}</span>
+                </div>
+                ${deliveryFee > 0 ? `
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Phí giao hàng</span>
+                        <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(deliveryFee)}</span>
+                    </div>
+                ` : ''}
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 1.3rem; font-weight: 700; color: var(--primary);">
+                    <span>TỔNG</span>
+                    <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</span>
+                </div>
+            `;
+        }
+
+        async function confirmOrder() {
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+
+            if (!name || !phone) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            if (currentOrderType === 'delivery' && !document.getElementById('deliveryAddress').value) {
+                alert('Vui lòng nhập địa chỉ giao hàng!');
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const deliveryFee = currentOrderType === 'delivery' ? 30000 : 0;
+            const total = subtotal + deliveryFee;
+
+            const orderData = {
+                customer_name: name,
+                customer_phone: phone,
+                customer_address: currentOrderType === 'delivery' ? document.getElementById('deliveryAddress').value : '',
+                order_type: currentOrderType,
+                items: cart.map(item => ({
+                    menu_item_id: item.id,
+                    quantity: item.qty,
+                    price: item.price
+                })),
+                total_amount: total,
+                notes: document.getElementById('orderNotes') ? document.getElementById('orderNotes').value : ''
+            };
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const orderTypeLabels = {
+                        'dine-in': 'Ăn tại nhà hàng',
+                        'takeaway': 'Mang về',
+                        'delivery': 'Giao hàng'
+                    };
+
+                    document.getElementById('displayOrderId').textContent = `Mã đơn hàng: #${data.order.id}`;
+                    document.getElementById('orderDetailsDisplay').innerHTML = `
+                        <h3 style="margin-bottom: 1rem;">Chi tiết đơn hàng</h3>
+                        ${cart.map(item => `
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>${item.name} x${item.qty}</span>
+                                <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.qty)}</span>
+                            </div>
+                        `).join('')}
+                        <hr style="margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem; color: var(--primary);">
+                            <span>Tổng cộng</span>
+                            <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</span>
+                        </div>
+                        <p style="margin-top: 1rem;"><strong>Loại:</strong> ${orderTypeLabels[currentOrderType]}</p>
+                        <p><strong>Trạng thái:</strong> Đã nhận đơn</p>
+                    `;
+
+                    cart = [];
+                    updateCartBadge();
+                    navigateTo('confirmation');
+                } else {
+                    alert('Có lỗi xảy ra khi đặt hàng: ' + (data.error || 'Vui lòng thử lại'));
+                }
+            } catch (error) {
+                console.error('Order submission error:', error);
+                alert('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.');
+            }
+        }
+
+        async function submitReservation() {
+            const name = document.getElementById('reservationName').value;
+            const phone = document.getElementById('reservationPhone').value;
+            const date = document.getElementById('reservationDate').value;
+            const time = document.getElementById('reservationTime').value;
+            const guests = document.getElementById('reservationGuests').value;
+
+            if (!name || !phone || !date || !time || !guests) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            const reservationData = {
+                customer_name: name,
+                customer_phone: phone,
+                reservation_date: date,
+                reservation_time: time,
+                number_of_guests: parseInt(guests),
+                notes: document.getElementById('reservationNotes').value
+            };
+
+            try {
+                const response = await fetch('/api/reservations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reservationData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Cảm ơn bạn!\n\nNhà hàng sẽ liên hệ xác nhận đặt bàn trong thời gian sớm nhất.');
+
+                    document.getElementById('reservationName').value = '';
+                    document.getElementById('reservationPhone').value = '';
+                    document.getElementById('reservationDate').value = '';
+                    document.getElementById('reservationTime').value = '';
+                    document.getElementById('reservationGuests').value = '';
+                    document.getElementById('reservationNotes').value = '';
+                } else {
+                    alert('Có lỗi xảy ra khi đặt bàn: ' + (data.error || 'Vui lòng thử lại'));
+                }
+            } catch (error) {
+                console.error('Reservation submission error:', error);
+                alert('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.');
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Initialize the application
+        loadMenuData();
+        updateCartBadge();
+    </script>
+</body>
+</html>

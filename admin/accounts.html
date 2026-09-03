@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tài Khoản - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><span class="nav-item-icon">📊</span><span>Tổng quan</span></a>
+                <a href="menu.html" class="nav-item"><span class="nav-item-icon">🍽️</span><span>Món ăn</span></a>
+                <a href="categories.html" class="nav-item"><span class="nav-item-icon">📂</span><span>Danh mục</span></a>
+                <a href="orders.html" class="nav-item"><span class="nav-item-icon">🛒</span><span>Đơn hàng</span></a>
+                <a href="reservations.html" class="nav-item"><span class="nav-item-icon">📅</span><span>Đặt bàn</span></a>
+                <a href="gallery.html" class="nav-item"><span class="nav-item-icon">🖼️</span><span>Hình ảnh</span></a>
+                <a href="settings.html" class="nav-item"><span class="nav-item-icon">⚙️</span><span>Cài đặt</span></a>
+                <a href="accounts.html" class="nav-item active"><span class="nav-item-icon">👥</span><span>Tài khoản</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">🚪 Đăng xuất</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Quản Lý Tài Khoản</h1>
+                <p class="page-subtitle">Quản lý tài khoản quản trị viên (chỉ SUPER_ADMIN)</p>
+            </div>
+
+            <div id="alertBox"></div>
+
+            <div class="card" id="mainContent">
+                <div class="card-header">
+                    <h2 class="card-title">Danh Sách Quản Trị Viên</h2>
+                    <button class="btn btn-primary" onclick="showAddModal()">➕ Tạo tài khoản</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountsTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="accountModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Tạo Tài Khoản</h3>
+                <button class="modal-close" onclick="hideAccountModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <input type="hidden" id="accountId">
+
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên <span style="color: red;">*</span></label>
+                        <input type="text" id="accountName" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email <span style="color: red;">*</span></label>
+                        <input type="email" id="accountEmail" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="tel" id="accountPhone" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Vai trò <span style="color: red;">*</span></label>
+                        <select id="accountRole" class="form-select" required>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="passwordGroup">
+                        <label class="form-label">Mật khẩu <span style="color: red;">*</span></label>
+                        <input type="password" id="accountPassword" class="form-input">
+                    </div>
+
+                    <div class="form-group" id="confirmPasswordGroup">
+                        <label class="form-label">Xác nhận mật khẩu <span style="color: red;">*</span></label>
+                        <input type="password" id="accountConfirmPassword" class="form-input">
+                    </div>
+
+                    <div class="form-group" id="activeGroup" style="display: none;">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="accountActive" class="form-select">
+                            <option value="1">Hoạt động</option>
+                            <option value="0">Đã vô hiệu hóa</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAccountModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="saveAccount()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+        let accounts = [];
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+            if (currentAdmin) {
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('mainContent').innerHTML = `
+                        <div class="alert alert-error">
+                            ❌ Bạn không có quyền truy cập trang này. Chỉ SUPER_ADMIN mới có thể quản lý tài khoản.
+                        </div>
+                    `;
+                    return;
+                }
+                await loadAccounts();
+            }
+        }
+
+        async function loadAccounts() {
+            try {
+                const response = await fetch('/api/admins', { credentials: 'include' });
+                const data = await response.json();
+                accounts = data.admins;
+                displayAccounts();
+            } catch (error) {
+                console.error('Load accounts error:', error);
+                document.getElementById('accountsTableBody').innerHTML =
+                    '<tr><td colspan="7" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        function displayAccounts() {
+            const tbody = document.getElementById('accountsTableBody');
+
+            if (accounts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có tài khoản</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = accounts.map(acc => `
+                <tr>
+                    <td><strong>${acc.name}</strong></td>
+                    <td>${acc.email}</td>
+                    <td>${acc.phone || '-'}</td>
+                    <td><span class="badge ${acc.role === 'SUPER_ADMIN' ? 'badge-warning' : 'badge-info'}">${acc.role}</span></td>
+                    <td><span class="badge ${acc.active ? 'badge-success' : 'badge-danger'}">${acc.active ? 'Hoạt động' : 'Vô hiệu hóa'}</span></td>
+                    <td>${AdminUI.formatDate(acc.created_at)}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editAccount(${acc.id})" style="padding: 6px 12px; margin-right: 5px;">✏️ Sửa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddModal() {
+            document.getElementById('modalTitle').textContent = 'Tạo Tài Khoản';
+            document.getElementById('accountForm').reset();
+            document.getElementById('accountId').value = '';
+            document.getElementById('accountRole').value = 'ADMIN';
+            document.getElementById('passwordGroup').style.display = 'block';
+            document.getElementById('confirmPasswordGroup').style.display = 'block';
+            document.getElementById('activeGroup').style.display = 'none';
+            document.getElementById('accountPassword').required = true;
+            document.getElementById('accountConfirmPassword').required = true;
+            AdminUI.showModal('accountModal');
+        }
+
+        function editAccount(id) {
+            const account = accounts.find(acc => acc.id === id);
+            if (!account) return;
+
+            document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Tài Khoản';
+            document.getElementById('accountId').value = account.id;
+            document.getElementById('accountName').value = account.name;
+            document.getElementById('accountEmail').value = account.email;
+            document.getElementById('accountPhone').value = account.phone || '';
+            document.getElementById('accountRole').value = account.role;
+            document.getElementById('accountActive').value = account.active ? '1' : '0';
+            document.getElementById('passwordGroup').style.display = 'none';
+            document.getElementById('confirmPasswordGroup').style.display = 'none';
+            document.getElementById('activeGroup').style.display = 'block';
+            document.getElementById('accountPassword').required = false;
+            document.getElementById('accountConfirmPassword').required = false;
+            AdminUI.showModal('accountModal');
+        }
+
+        function hideAccountModal() {
+            AdminUI.hideModal('accountModal');
+        }
+
+        async function saveAccount() {
+            const id = document.getElementById('accountId').value;
+            const name = document.getElementById('accountName').value.trim();
+            const email = document.getElementById('accountEmail').value.trim();
+            const phone = document.getElementById('accountPhone').value.trim();
+            const role = document.getElementById('accountRole').value;
+            const password = document.getElementById('accountPassword').value;
+            const confirmPassword = document.getElementById('accountConfirmPassword').value;
+            const active = document.getElementById('accountActive').value;
+
+            if (!name || !email || !role) {
+                AdminUI.showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+
+            if (!id && (!password || !confirmPassword)) {
+                AdminUI.showAlert('Vui lòng nhập mật khẩu', 'error');
+                return;
+            }
+
+            if (!id && password !== confirmPassword) {
+                AdminUI.showAlert('Mật khẩu xác nhận không khớp', 'error');
+                return;
+            }
+
+            if (!id && password.length < 6) {
+                AdminUI.showAlert('Mật khẩu phải có ít nhất 6 ký tự', 'error');
+                return;
+            }
+
+            try {
+                const url = id ? `/api/admins/${id}` : '/api/admins';
+                const method = id ? 'PUT' : 'POST';
+
+                const body = id
+                    ? { name, email, phone, role, active: parseInt(active) }
+                    : { name, email, phone, role, password, confirmPassword };
+
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    hideAccountModal();
+                    await loadAccounts();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Save account error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

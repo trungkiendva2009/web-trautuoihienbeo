@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Danh Mục - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <span class="nav-item-icon">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <span class="nav-item-icon">🍽️</span>
+                    <span>Món ăn</span>
+                </a>
+                <a href="categories.html" class="nav-item active">
+                    <span class="nav-item-icon">📂</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <span class="nav-item-icon">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="reservations.html" class="nav-item">
+                    <span class="nav-item-icon">📅</span>
+                    <span>Đặt bàn</span>
+                </a>
+                <a href="gallery.html" class="nav-item">
+                    <span class="nav-item-icon">🖼️</span>
+                    <span>Hình ảnh</span>
+                </a>
+                <a href="settings.html" class="nav-item" id="settingsNav">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="accounts.html" class="nav-item" id="accountsNav">
+                    <span class="nav-item-icon">👥</span>
+                    <span>Tài khoản</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">
+                    🚪 Đăng xuất
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Quản Lý Danh Mục</h1>
+                    <p class="page-subtitle">Quản lý danh mục món ăn</p>
+                </div>
+            </div>
+
+            <div id="alertBox"></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Danh Mục Món Ăn</h2>
+                    <button class="btn btn-primary" onclick="showAddModal()">
+                        ➕ Thêm danh mục
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên danh mục</th>
+                                <th>Mô tả</th>
+                                <th>Số món ăn</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <tr>
+                                <td colspan="4" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Thêm Danh Mục</h3>
+                <button class="modal-close" onclick="hideCategoryModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+
+                    <div class="form-group">
+                        <label class="form-label">Tên danh mục <span style="color: red;">*</span></label>
+                        <input type="text" id="categoryName" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mô tả</label>
+                        <textarea id="categoryDescription" class="form-textarea"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideCategoryModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="saveCategory()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+        let categories = [];
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+            if (currentAdmin) {
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('settingsNav').style.display = 'none';
+                    document.getElementById('accountsNav').style.display = 'none';
+                }
+                await loadCategories();
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/categories');
+                const data = await response.json();
+                categories = data.categories;
+
+                // Get menu items count for each category
+                const menuResponse = await fetch('/api/menu');
+                const menuData = await menuResponse.json();
+
+                const categoryCounts = {};
+                menuData.items.forEach(item => {
+                    categoryCounts[item.category_id] = (categoryCounts[item.category_id] || 0) + 1;
+                });
+
+                displayCategories(categoryCounts);
+            } catch (error) {
+                console.error('Load categories error:', error);
+                document.getElementById('categoriesTableBody').innerHTML =
+                    '<tr><td colspan="4" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        function displayCategories(counts) {
+            const tbody = document.getElementById('categoriesTableBody');
+
+            if (categories.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">Chưa có danh mục</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = categories.map(cat => `
+                <tr>
+                    <td><strong>${cat.name}</strong></td>
+                    <td>${cat.description || '-'}</td>
+                    <td>${counts[cat.id] || 0} món</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editCategory(${cat.id})" style="padding: 6px 12px; margin-right: 5px;">
+                            ✏️ Sửa
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteCategory(${cat.id}, '${cat.name}', ${counts[cat.id] || 0})" style="padding: 6px 12px;">
+                            🗑️ Xóa
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddModal() {
+            document.getElementById('modalTitle').textContent = 'Thêm Danh Mục';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            AdminUI.showModal('categoryModal');
+        }
+
+        function editCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (!category) return;
+
+            document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Danh Mục';
+            document.getElementById('categoryId').value = category.id;
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryDescription').value = category.description || '';
+
+            AdminUI.showModal('categoryModal');
+        }
+
+        function hideCategoryModal() {
+            AdminUI.hideModal('categoryModal');
+        }
+
+        async function saveCategory() {
+            const id = document.getElementById('categoryId').value;
+            const name = document.getElementById('categoryName').value.trim();
+            const description = document.getElementById('categoryDescription').value.trim();
+
+            if (!name) {
+                AdminUI.showAlert('Vui lòng nhập tên danh mục', 'error');
+                return;
+            }
+
+            try {
+                const url = id ? `/api/categories/${id}` : '/api/categories';
+                const method = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, description })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    hideCategoryModal();
+                    await loadCategories();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Save category error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        async function deleteCategory(id, name, itemCount) {
+            if (itemCount > 0) {
+                AdminUI.showAlert(`Không thể xóa danh mục "${name}" vì có ${itemCount} món ăn`, 'error');
+                return;
+            }
+
+            if (!AdminUI.confirmDelete(`Bạn có chắc chắn muốn xóa danh mục "${name}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/categories/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    await loadCategories();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                }
+            } catch (error) {
+                console.error('Delete category error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

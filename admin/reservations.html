@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Đặt Bàn - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🐃</div>
+                <div class="sidebar-title">TRÂU TƯƠI HIỀN BÉO</div>
+                <div class="sidebar-subtitle">Quản trị nhà hàng</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <span class="nav-item-icon">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <span class="nav-item-icon">🍽️</span>
+                    <span>Món ăn</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-item-icon">📂</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <span class="nav-item-icon">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="reservations.html" class="nav-item active">
+                    <span class="nav-item-icon">📅</span>
+                    <span>Đặt bàn</span>
+                </a>
+                <a href="gallery.html" class="nav-item">
+                    <span class="nav-item-icon">🖼️</span>
+                    <span>Hình ảnh</span>
+                </a>
+                <a href="settings.html" class="nav-item" id="settingsNav">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="accounts.html" class="nav-item" id="accountsNav">
+                    <span class="nav-item-icon">👥</span>
+                    <span>Tài khoản</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Admin</div>
+                        <div class="user-role" id="userRole">Quản trị viên</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="AdminAuth.logout()">
+                    🚪 Đăng xuất
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Quản Lý Đặt Bàn</h1>
+                <p class="page-subtitle">Quản lý các yêu cầu đặt bàn từ khách hàng</p>
+            </div>
+
+            <div id="alertBox"></div>
+
+            <!-- Filters -->
+            <div class="card">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <select id="statusFilter" class="form-select" style="width: 180px;">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="pending">Chờ xác nhận</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="completed">Hoàn thành</option>
+                        <option value="cancelled">Đã hủy</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="form-input" style="width: 180px;">
+                    <button class="btn btn-secondary" onclick="clearFilters()">Xóa bộ lọc</button>
+                </div>
+            </div>
+
+            <!-- Reservations Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày</th>
+                                <th>Giờ</th>
+                                <th>Số khách</th>
+                                <th>Ghi chú</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let currentAdmin = null;
+        let reservations = [];
+
+        async function init() {
+            currentAdmin = await initializeUserDisplay();
+            if (currentAdmin) {
+                if (currentAdmin.role !== 'SUPER_ADMIN') {
+                    document.getElementById('settingsNav').style.display = 'none';
+                    document.getElementById('accountsNav').style.display = 'none';
+                }
+                await loadReservations();
+                setupEventListeners();
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('statusFilter').addEventListener('change', loadReservations);
+            document.getElementById('dateFilter').addEventListener('change', loadReservations);
+        }
+
+        async function loadReservations() {
+            try {
+                const status = document.getElementById('statusFilter').value;
+                const date = document.getElementById('dateFilter').value;
+
+                let url = '/api/reservations?';
+                if (status) url += `status=${status}&`;
+                if (date) url += `date=${date}&`;
+
+                const response = await fetch(url, { credentials: 'include' });
+                const data = await response.json();
+                reservations = data.reservations;
+                displayReservations();
+            } catch (error) {
+                console.error('Load reservations error:', error);
+                document.getElementById('reservationsTableBody').innerHTML =
+                    '<tr><td colspan="8" class="text-center">Không thể tải dữ liệu</td></tr>';
+            }
+        }
+
+        function displayReservations() {
+            const tbody = document.getElementById('reservationsTableBody');
+
+            if (reservations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Chưa có đặt bàn</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = reservations.map(res => `
+                <tr>
+                    <td><strong>${res.customer_name}</strong></td>
+                    <td>${res.phone}</td>
+                    <td>${AdminUI.formatDate(res.reservation_date)}</td>
+                    <td>${res.reservation_time}</td>
+                    <td>${res.number_of_guests} người</td>
+                    <td>${res.notes || '-'}</td>
+                    <td>
+                        <select class="form-select" style="padding: 4px 8px; font-size: 12px;"
+                                onchange="updateReservationStatus(${res.id}, this.value)">
+                            <option value="pending" ${res.status === 'pending' ? 'selected' : ''}>Chờ xác nhận</option>
+                            <option value="confirmed" ${res.status === 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                            <option value="completed" ${res.status === 'completed' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="cancelled" ${res.status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="tel:${res.phone}" class="btn btn-secondary" style="padding: 6px 12px;">
+                            📞 Gọi
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateReservationStatus(reservationId, newStatus) {
+            try {
+                const response = await fetch(`/api/reservations/${reservationId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    AdminUI.showAlert(data.message, 'success');
+                    await loadReservations();
+                } else {
+                    AdminUI.showAlert(data.error || 'Đã xảy ra lỗi', 'error');
+                    await loadReservations();
+                }
+            } catch (error) {
+                console.error('Update reservation status error:', error);
+                AdminUI.showAlert('Không thể kết nối đến máy chủ', 'error');
+            }
+        }
+
+        function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            loadReservations();
+        }
+
+        init();
+    </script>
+</body>
+</html>
